@@ -8,6 +8,7 @@ import StyleStep from "@/components/configurator/StyleStep";
 import GlassFeaturesStep from "@/components/configurator/GlassFeaturesStep";
 import FinishingStep from "@/components/configurator/FinishingStep";
 import ReviewStep from "@/components/configurator/ReviewStep";
+import PriceCalculator from "@/components/configurator/PriceCalculator";
 import { WindowConfig } from "@/types/window-config";
 
 const steps = [
@@ -114,6 +115,12 @@ const Configure = () => {
 
         <div className="max-w-4xl mx-auto">
           <CurrentStepComponent config={config} updateConfig={updateConfig} />
+          
+          {currentStep < steps.length && (
+            <div className="mt-6">
+              <PriceCalculator config={config} detailed={false} />
+            </div>
+          )}
 
           <div className="flex justify-between mt-8 pt-8 border-t">
             <Button variant="outline" onClick={handleBack}>

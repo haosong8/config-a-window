@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { WindowConfig } from "@/types/window-config";
 import { Check } from "lucide-react";
+import PriceCalculator from "./PriceCalculator";
 
 interface ReviewStepProps {
   config: WindowConfig;
@@ -26,6 +27,8 @@ const ReviewStep = ({ config }: ReviewStepProps) => {
 
   return (
     <div className="space-y-6">
+      <PriceCalculator config={config} detailed={true} />
+      
       <Card>
         <CardHeader>
           <div className="flex items-center gap-2">
