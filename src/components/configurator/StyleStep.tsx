@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Input } from "@/components/ui/input";
 import { WindowConfig, OpeningType } from "@/types/window-config";
+import Window3D from "./Window3D";
 
 interface StyleStepProps {
   config: WindowConfig;
@@ -19,6 +20,12 @@ const openingTypes: { value: OpeningType; label: string; description: string }[]
 const OpeningVisual = ({ type }: { type: OpeningType }) => {
   const baseClasses = "border-2 border-primary/40 bg-blue-50";
   
+  // Use 3D visualization for swing types
+  if (type === "in-swing" || type === "out-swing") {
+    return <Window3D type={type} />;
+  }
+  
+  // Use 2D visualization for hung types
   switch (type) {
     case "double-hung":
       return (
@@ -45,26 +52,8 @@ const OpeningVisual = ({ type }: { type: OpeningType }) => {
           </div>
         </div>
       );
-    case "in-swing":
-      return (
-        <div className="w-20 h-24 mx-auto mb-3 relative">
-          <div className={`${baseClasses} w-full h-full relative overflow-hidden`}>
-            <div className="absolute left-0 top-0 w-1 h-full bg-primary/60"></div>
-            <div className="absolute left-2 top-1/2 -translate-y-1/2 w-2 h-8 border-2 border-primary/60 rounded-full bg-primary/20"></div>
-            <div className="text-[10px] text-primary/60 absolute right-3 top-1/2 -translate-y-1/2">→</div>
-          </div>
-        </div>
-      );
-    case "out-swing":
-      return (
-        <div className="w-20 h-24 mx-auto mb-3 relative">
-          <div className={`${baseClasses} w-full h-full relative overflow-hidden`}>
-            <div className="absolute left-0 top-0 w-1 h-full bg-primary/60"></div>
-            <div className="absolute left-2 top-1/2 -translate-y-1/2 w-2 h-8 border-2 border-primary/60 rounded-full bg-primary/20"></div>
-            <div className="text-[10px] text-primary/60 absolute left-3 top-1/2 -translate-y-1/2">←</div>
-          </div>
-        </div>
-      );
+    default:
+      return null;
   }
 };
 
