@@ -18,43 +18,8 @@ const openingTypes: { value: OpeningType; label: string; description: string }[]
 ];
 
 const OpeningVisual = ({ type }: { type: OpeningType }) => {
-  const baseClasses = "border-2 border-primary/40 bg-blue-50";
-  
-  // Use 3D visualization for swing types
-  if (type === "in-swing" || type === "out-swing") {
-    return <Window3D type={type} />;
-  }
-  
-  // Use 2D visualization for hung types
-  switch (type) {
-    case "double-hung":
-      return (
-        <div className="flex flex-col gap-0.5 w-20 h-24 mx-auto mb-3">
-          <div className={`${baseClasses} h-1/2 flex items-center justify-center relative`}>
-            <div className="absolute right-1 top-1/2 -translate-y-1/2 w-1 h-4 bg-primary/60 rounded"></div>
-            <div className="text-[10px] text-primary/60">↕</div>
-          </div>
-          <div className={`${baseClasses} h-1/2 flex items-center justify-center relative`}>
-            <div className="absolute right-1 top-1/2 -translate-y-1/2 w-1 h-4 bg-primary/60 rounded"></div>
-            <div className="text-[10px] text-primary/60">↕</div>
-          </div>
-        </div>
-      );
-    case "single-hung":
-      return (
-        <div className="flex flex-col gap-0.5 w-20 h-24 mx-auto mb-3">
-          <div className={`${baseClasses} h-1/2 flex items-center justify-center`}>
-            <div className="text-[10px] text-muted-foreground">Fixed</div>
-          </div>
-          <div className={`${baseClasses} h-1/2 flex items-center justify-center relative`}>
-            <div className="absolute right-1 top-1/2 -translate-y-1/2 w-1 h-4 bg-primary/60 rounded"></div>
-            <div className="text-[10px] text-primary/60">↕</div>
-          </div>
-        </div>
-      );
-    default:
-      return null;
-  }
+  // Use 3D visualization for all window types
+  return <Window3D type={type} />;
 };
 
 const StyleStep = ({ config, updateConfig }: StyleStepProps) => {
