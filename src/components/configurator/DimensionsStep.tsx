@@ -22,7 +22,7 @@ const DimensionsStep = ({ config, updateConfig }: DimensionsStepProps) => {
             <Input
               id="width"
               type="number"
-              value={config.width}
+              value={config.width === 0 ? '' : config.width}
               onChange={(e) => updateConfig({ width: parseInt(e.target.value) || 0 })}
               className="text-lg"
             />
@@ -38,7 +38,7 @@ const DimensionsStep = ({ config, updateConfig }: DimensionsStepProps) => {
             <Input
               id="height"
               type="number"
-              value={config.height}
+              value={config.height === 0 ? '' : config.height}
               onChange={(e) => updateConfig({ height: parseInt(e.target.value) || 0 })}
               className="text-lg"
             />
