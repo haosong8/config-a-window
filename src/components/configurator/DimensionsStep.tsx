@@ -22,26 +22,32 @@ const DimensionsStep = ({ config, updateConfig }: DimensionsStepProps) => {
             <Input
               id="width"
               type="number"
-              min="12"
-              max="120"
               value={config.width}
-              onChange={(e) => updateConfig({ width: parseInt(e.target.value) || 12 })}
+              onChange={(e) => updateConfig({ width: parseInt(e.target.value) || 0 })}
               className="text-lg"
             />
-            <p className="text-sm text-muted-foreground">Range: 12" - 120"</p>
+            {(config.width < 12 || config.width > 120) && (
+              <p className="text-sm text-destructive">⚠️ Recommended range: 12" - 120"</p>
+            )}
+            {config.width >= 12 && config.width <= 120 && (
+              <p className="text-sm text-muted-foreground">Recommended range: 12" - 120"</p>
+            )}
           </div>
           <div className="space-y-2">
             <Label htmlFor="height">Height (inches)</Label>
             <Input
               id="height"
               type="number"
-              min="12"
-              max="120"
               value={config.height}
-              onChange={(e) => updateConfig({ height: parseInt(e.target.value) || 12 })}
+              onChange={(e) => updateConfig({ height: parseInt(e.target.value) || 0 })}
               className="text-lg"
             />
-            <p className="text-sm text-muted-foreground">Range: 12" - 120"</p>
+            {(config.height < 12 || config.height > 120) && (
+              <p className="text-sm text-destructive">⚠️ Recommended range: 12" - 120"</p>
+            )}
+            {config.height >= 12 && config.height <= 120 && (
+              <p className="text-sm text-muted-foreground">Recommended range: 12" - 120"</p>
+            )}
           </div>
         </div>
         
