@@ -37,8 +37,20 @@ const Configure = () => {
   const progress = (currentStep / steps.length) * 100;
   const CurrentStepComponent = steps[currentStep - 1].component;
 
+  const isStepValid = () => {
+    switch (currentStep) {
+      case 1: // Dimensions
+        return config.width >= 12 && config.width <= 120 && config.height >= 12 && config.height <= 120;
+      case 2: // Style
+        return config.verticalPanes >= 1 && config.verticalPanes <= 3 && 
+               config.horizontalPanes >= 1 && config.horizontalPanes <= 3;
+      default:
+        return true;
+    }
+  };
+
   const handleNext = () => {
-    if (currentStep < steps.length) {
+    if (currentStep < steps.length && isStepValid()) {
       setCurrentStep(currentStep + 1);
     }
   };
@@ -108,7 +120,7 @@ const Configure = () => {
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back
             </Button>
-            <Button onClick={handleNext} disabled={currentStep === steps.length}>
+            <Button onClick={handleNext} disabled={currentStep === steps.length || !isStepValid()}>
               {currentStep === steps.length ? (
                 <>
                   <Check className="w-4 h-4 mr-2" />

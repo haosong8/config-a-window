@@ -64,28 +64,34 @@ const StyleStep = ({ config, updateConfig }: StyleStepProps) => {
               <Input
                 id="vertical"
                 type="number"
-                min="1"
-                max="3"
-                value={config.verticalPanes}
+                value={config.verticalPanes === 0 ? '' : config.verticalPanes}
                 onChange={(e) =>
-                  updateConfig({ verticalPanes: Math.min(3, Math.max(1, parseInt(e.target.value) || 1)) })
+                  updateConfig({ verticalPanes: parseInt(e.target.value) || 0 })
                 }
               />
-              <p className="text-sm text-muted-foreground">1-3 panes</p>
+              {(config.verticalPanes < 1 || config.verticalPanes > 3) && (
+                <p className="text-sm text-destructive">⚠️ Required range: 1-3 panes</p>
+              )}
+              {config.verticalPanes >= 1 && config.verticalPanes <= 3 && (
+                <p className="text-sm text-muted-foreground">Required range: 1-3 panes</p>
+              )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="horizontal">Horizontal Panes</Label>
               <Input
                 id="horizontal"
                 type="number"
-                min="1"
-                max="3"
-                value={config.horizontalPanes}
+                value={config.horizontalPanes === 0 ? '' : config.horizontalPanes}
                 onChange={(e) =>
-                  updateConfig({ horizontalPanes: Math.min(3, Math.max(1, parseInt(e.target.value) || 1)) })
+                  updateConfig({ horizontalPanes: parseInt(e.target.value) || 0 })
                 }
               />
-              <p className="text-sm text-muted-foreground">1-3 panes</p>
+              {(config.horizontalPanes < 1 || config.horizontalPanes > 3) && (
+                <p className="text-sm text-destructive">⚠️ Required range: 1-3 panes</p>
+              )}
+              {config.horizontalPanes >= 1 && config.horizontalPanes <= 3 && (
+                <p className="text-sm text-muted-foreground">Required range: 1-3 panes</p>
+              )}
             </div>
           </div>
           
