@@ -42,14 +42,25 @@ const Index = () => {
               Create custom windows and doors tailored to your exact specifications. Choose dimensions,
               styles, features, and finishes with our intuitive configurator.
             </p>
-            <Button
-              size="lg"
-              onClick={() => navigate("/configure")}
-              className="bg-accent-warm text-accent-warm-foreground hover:bg-accent-warm/90 text-lg px-8 py-6 animate-in fade-in slide-in-from-bottom-6 duration-700 delay-200"
-            >
-              Start Configuring
-              <ArrowRight className="ml-2 w-5 h-5" />
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center animate-in fade-in slide-in-from-bottom-6 duration-700 delay-200">
+              <Button
+                size="lg"
+                onClick={() => navigate("/configure")}
+                className="bg-accent-warm text-accent-warm-foreground hover:bg-accent-warm/90 text-lg px-8 py-6"
+              >
+                Multi-Step Configurator
+                <ArrowRight className="ml-2 w-5 h-5" />
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                onClick={() => navigate("/single-page-configure")}
+                className="text-lg px-8 py-6 border-2"
+              >
+                Single-Page Configurator
+                <ArrowRight className="ml-2 w-5 h-5" />
+              </Button>
+            </div>
           </div>
         </div>
         <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-background to-transparent" />
