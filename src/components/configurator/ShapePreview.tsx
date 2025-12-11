@@ -67,6 +67,24 @@ const ShapePreview = ({ shape, dimensions, maxSize = 350 }: ShapePreviewProps) =
             </div>
           </>
         );
+
+      case "isosceles-triangle":
+        return (
+          <>
+            {/* Base label (bottom) */}
+            <div className="absolute -bottom-8 left-0 right-0 flex justify-center">
+              <div className="bg-background border border-border px-2 py-1 rounded text-sm font-medium">
+                Base: {dimensions.isoscelesBase}"
+              </div>
+            </div>
+            {/* Height label (center) */}
+            <div className="absolute -right-20 top-0 bottom-0 flex items-center">
+              <div className="bg-background border border-border px-2 py-1 rounded text-sm font-medium">
+                H: {dimensions.isoscelesHeight}"
+              </div>
+            </div>
+          </>
+        );
       
       case "trapezoid":
         return (

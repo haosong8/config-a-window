@@ -71,6 +71,34 @@ const ShapeDimensionInputs = ({ shape, dimensions, updateDimensions }: ShapeDime
           </div>
         );
 
+      case "isosceles-triangle":
+        return (
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="isoscelesBase">Base Width (inches)</Label>
+              <Input
+                id="isoscelesBase"
+                type="number"
+                value={dimensions.isoscelesBase === 0 ? '' : dimensions.isoscelesBase || ''}
+                onChange={(e) => updateDimensions({ isoscelesBase: parseInt(e.target.value) || 0 })}
+                className="text-lg"
+              />
+              <p className="text-xs text-muted-foreground">Full horizontal span at bottom</p>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="isoscelesHeight">Height (inches)</Label>
+              <Input
+                id="isoscelesHeight"
+                type="number"
+                value={dimensions.isoscelesHeight === 0 ? '' : dimensions.isoscelesHeight || ''}
+                onChange={(e) => updateDimensions({ isoscelesHeight: parseInt(e.target.value) || 0 })}
+                className="text-lg"
+              />
+              <p className="text-xs text-muted-foreground">Bottom center to peak</p>
+            </div>
+          </div>
+        );
+
       case "trapezoid":
         return (
           <div className="space-y-4">
