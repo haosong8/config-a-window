@@ -4,6 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Switch } from "@/components/ui/switch";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { WindowConfig } from "@/types/window-config";
 import PriceCalculator from "@/components/configurator/PriceCalculator";
 import ShapeSelector from "@/components/configurator/ShapeSelector";
@@ -12,6 +13,7 @@ import ShapeDimensionInputs from "@/components/configurator/ShapeDimensionInputs
 import { ShapeType, ShapeDimensions, calculateShapeArea } from "@/lib/geometry";
 
 const SinglePageConfigure = () => {
+  const [isIrregular, setIsIrregular] = useState(false);
   const [shape, setShape] = useState<ShapeType>("rectangle");
   const [dimensions, setDimensions] = useState<ShapeDimensions>({
     width: 48,
@@ -212,17 +214,38 @@ const SinglePageConfigure = () => {
               <CardDescription>Select shape type and enter dimensions in inches</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              {/* Shape Selector */}
+              {/* Regular/Irregular Toggle */}
               <div className="space-y-3">
                 <Label className="text-base font-semibold">Shape Type</Label>
-                <ShapeSelector value={shape} onChange={setShape} />
+                <Tabs 
+                  value={isIrregular ? "irregular" : "regular"} 
+                  onValueChange={(v) => {
+                    const irregular = v === "irregular";
+                    setIsIrregular(irregular);
+                    if (!irregular) setShape("rectangle");
+                  }}
+                  className="w-full"
+                >
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="regular">Regular</TabsTrigger>
+                    <TabsTrigger value="irregular">Irregular</TabsTrigger>
+                  </TabsList>
+                </Tabs>
               </div>
+
+              {/* Irregular Shape Selector - only show when irregular is selected */}
+              {isIrregular && (
+                <div className="space-y-3">
+                  <Label className="text-base font-semibold">Select Shape</Label>
+                  <ShapeSelector value={shape} onChange={setShape} showRectangle={false} />
+                </div>
+              )}
 
               {/* Shape-specific dimension inputs */}
               <div className="space-y-3">
                 <Label className="text-base font-semibold">Dimensions</Label>
                 <ShapeDimensionInputs 
-                  shape={shape} 
+                  shape={shape}
                   dimensions={dimensions} 
                   updateDimensions={updateDimensions} 
                 />
