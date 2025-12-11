@@ -1,6 +1,7 @@
 export type ShapeType = 
   | "rectangle" 
   | "right-triangle" 
+  | "isosceles-triangle"
   | "trapezoid" 
   | "house" 
   | "parallelogram"
@@ -15,6 +16,9 @@ export interface ShapeDimensions {
   // Right triangle
   baseWidth?: number;
   triangleHeight?: number;
+  // Isosceles triangle (centered apex)
+  isoscelesBase?: number;
+  isoscelesHeight?: number;
   // Trapezoid (right trapezoid with left side vertical)
   bottomWidth?: number;
   topWidth?: number;
@@ -71,6 +75,16 @@ export function getShapeVertices(shape: ShapeType, dims: ShapeDimensions): Point
         { x: dims.baseWidth || 0, y: 0 },
         { x: 0, y: dims.triangleHeight || 0 },
       ];
+
+    case "isosceles-triangle": {
+      const base = dims.isoscelesBase || 0;
+      const h = dims.isoscelesHeight || 0;
+      return [
+        { x: 0, y: 0 },
+        { x: base, y: 0 },
+        { x: base / 2, y: h },
+      ];
+    }
 
     case "trapezoid": {
       const bottom = dims.bottomWidth || 0;

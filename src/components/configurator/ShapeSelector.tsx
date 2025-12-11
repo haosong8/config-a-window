@@ -18,9 +18,19 @@ const shapes: { value: ShapeType; label: string; description: string; icon: Reac
   },
   {
     value: "right-triangle",
-    label: "Triangle",
-    description: "3-sided rake",
+    label: "Right Triangle",
+    description: "Rake (one 90° corner)",
     icon: <Triangle className="w-6 h-6" />,
+  },
+  {
+    value: "isosceles-triangle",
+    label: "Isosceles Triangle",
+    description: "Center peak",
+    icon: (
+      <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <path d="M12 4 L22 20 L2 20 Z" />
+      </svg>
+    ),
   },
   {
     value: "trapezoid",
