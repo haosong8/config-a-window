@@ -5,10 +5,30 @@ import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Switch } from "@/components/ui/switch";
 import { WindowConfig } from "@/types/window-config";
-import Window3D from "@/components/configurator/Window3D";
 import PriceCalculator from "@/components/configurator/PriceCalculator";
+import ShapeSelector from "@/components/configurator/ShapeSelector";
+import ShapePreview from "@/components/configurator/ShapePreview";
+import ShapeDimensionInputs from "@/components/configurator/ShapeDimensionInputs";
+import { ShapeType, ShapeDimensions, calculateShapeArea } from "@/lib/geometry";
 
 const SinglePageConfigure = () => {
+  const [shape, setShape] = useState<ShapeType>("rectangle");
+  const [dimensions, setDimensions] = useState<ShapeDimensions>({
+    width: 48,
+    height: 60,
+    baseWidth: 48,
+    triangleHeight: 36,
+    bottomWidth: 60,
+    topWidth: 36,
+    trapezoidHeight: 48,
+    houseWidth: 48,
+    wallHeight: 36,
+    gableRise: 24,
+    parallelogramBase: 48,
+    parallelogramHeight: 36,
+    skewOffset: 12,
+  });
+
   const [config, setConfig] = useState<WindowConfig>({
     width: 48,
     height: 60,
@@ -22,15 +42,25 @@ const SinglePageConfigure = () => {
     hardwareType: "standard"
   });
 
+  const updateDimensions = (updates: Partial<ShapeDimensions>) => {
+    setDimensions(prev => ({ ...prev, ...updates }));
+  };
+
   const updateConfig = (updates: Partial<WindowConfig>) => {
     setConfig(prev => ({ ...prev, ...updates }));
   };
 
-  // Calculate scale for preview
-  const maxPreviewSize = 400;
-  const scale = Math.min(maxPreviewSize / config.width, maxPreviewSize / config.height);
-  const previewWidth = config.width * scale;
-  const previewHeight = config.height * scale;
+  // Calculate area based on shape
+  const area = calculateShapeArea(shape, dimensions);
+  const areaInSqFt = area / 144;
+
+  // Create a modified config with the calculated area for pricing
+  const configForPricing: WindowConfig = {
+    ...config,
+    // Use equivalent dimensions for pricing (area-based)
+    width: Math.sqrt(area),
+    height: Math.sqrt(area),
+  };
 
   const colors = [
     { value: "white", label: "White", hex: "#FFFFFF" },
@@ -54,46 +84,11 @@ const SinglePageConfigure = () => {
           <Card className="lg:row-span-1">
             <CardHeader>
               <CardTitle className="text-2xl">Custom Window</CardTitle>
-              <CardDescription>Live preview of your configuration</CardDescription>
+              <CardDescription>Live preview of your configuration (to scale)</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="bg-muted rounded-lg p-8">
-                <div className="flex items-center justify-center min-h-[400px]">
-                  <div className="relative">
-                    <div 
-                      className="border-4 border-primary bg-primary/5 relative transition-all duration-300"
-                      style={{
-                        width: `${previewWidth}px`,
-                        height: `${previewHeight}px`
-                      }}
-                    >
-                      {/* Width dimension label */}
-                      <div className="absolute -top-8 left-0 right-0 flex items-center justify-center">
-                        <div className="bg-background border border-border px-3 py-1 rounded-md text-sm font-medium">
-                          {config.width}" ({(config.width / 12).toFixed(1)}')
-                        </div>
-                      </div>
-                      
-                      {/* Height dimension label */}
-                      <div className="absolute -right-24 top-0 bottom-0 flex items-center justify-center">
-                        <div className="bg-background border border-border px-3 py-1 rounded-md text-sm font-medium">
-                          {config.height}" ({(config.height / 12).toFixed(1)}')
-                        </div>
-                      </div>
-
-                      {/* Grid overlay */}
-                      <div className="absolute inset-0 grid" style={{
-                        gridTemplateColumns: `repeat(${config.verticalPanes}, 1fr)`,
-                        gridTemplateRows: `repeat(${config.horizontalPanes}, 1fr)`,
-                        gap: '4px'
-                      }}>
-                        {Array.from({ length: config.verticalPanes * config.horizontalPanes }).map((_, i) => (
-                          <div key={i} className="border border-primary/30" />
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <ShapePreview shape={shape} dimensions={dimensions} />
               </div>
             </CardContent>
           </Card>
@@ -210,75 +205,64 @@ const SinglePageConfigure = () => {
             </CardContent>
           </Card>
 
-          {/* Bottom Left: Window Dimensions Input */}
+          {/* Bottom Left: Shape & Dimensions Input */}
           <Card className="lg:row-span-1">
             <CardHeader>
-              <CardTitle>Window Dimensions</CardTitle>
-              <CardDescription>Enter width and height in inches</CardDescription>
+              <CardTitle>Window Shape & Dimensions</CardTitle>
+              <CardDescription>Select shape type and enter dimensions in inches</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="width">Width (inches)</Label>
-                  <Input
-                    id="width"
-                    type="number"
-                    value={config.width === 0 ? '' : config.width}
-                    onChange={(e) => updateConfig({ width: parseInt(e.target.value) || 0 })}
-                    className="text-lg"
-                  />
-                  {(config.width < 12 || config.width > 120) && (
-                    <p className="text-sm text-destructive">⚠️ Range: 12" - 120"</p>
-                  )}
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="height">Height (inches)</Label>
-                  <Input
-                    id="height"
-                    type="number"
-                    value={config.height === 0 ? '' : config.height}
-                    onChange={(e) => updateConfig({ height: parseInt(e.target.value) || 0 })}
-                    className="text-lg"
-                  />
-                  {(config.height < 12 || config.height > 120) && (
-                    <p className="text-sm text-destructive">⚠️ Range: 12" - 120"</p>
-                  )}
-                </div>
-              </div>
-
-              {/* Grid Configuration */}
+              {/* Shape Selector */}
               <div className="space-y-3">
-                <Label className="text-base font-semibold">Grid Pattern</Label>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="vertical-panes">Vertical Panes</Label>
-                    <Input
-                      id="vertical-panes"
-                      type="number"
-                      min="1"
-                      max="3"
-                      value={config.verticalPanes}
-                      onChange={(e) => updateConfig({ verticalPanes: Math.max(1, Math.min(3, parseInt(e.target.value) || 1)) })}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="horizontal-panes">Horizontal Panes</Label>
-                    <Input
-                      id="horizontal-panes"
-                      type="number"
-                      min="1"
-                      max="3"
-                      value={config.horizontalPanes}
-                      onChange={(e) => updateConfig({ horizontalPanes: Math.max(1, Math.min(3, parseInt(e.target.value) || 1)) })}
-                    />
-                  </div>
-                </div>
+                <Label className="text-base font-semibold">Shape Type</Label>
+                <ShapeSelector value={shape} onChange={setShape} />
               </div>
 
-              <div className="pt-4">
+              {/* Shape-specific dimension inputs */}
+              <div className="space-y-3">
+                <Label className="text-base font-semibold">Dimensions</Label>
+                <ShapeDimensionInputs 
+                  shape={shape} 
+                  dimensions={dimensions} 
+                  updateDimensions={updateDimensions} 
+                />
+              </div>
+
+              {/* Grid Configuration (only for rectangle) */}
+              {shape === "rectangle" && (
+                <div className="space-y-3">
+                  <Label className="text-base font-semibold">Grid Pattern</Label>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="vertical-panes">Vertical Panes</Label>
+                      <Input
+                        id="vertical-panes"
+                        type="number"
+                        min="1"
+                        max="3"
+                        value={config.verticalPanes}
+                        onChange={(e) => updateConfig({ verticalPanes: Math.max(1, Math.min(3, parseInt(e.target.value) || 1)) })}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="horizontal-panes">Horizontal Panes</Label>
+                      <Input
+                        id="horizontal-panes"
+                        type="number"
+                        min="1"
+                        max="3"
+                        value={config.horizontalPanes}
+                        onChange={(e) => updateConfig({ horizontalPanes: Math.max(1, Math.min(3, parseInt(e.target.value) || 1)) })}
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <div className="pt-4 border-t">
                 <p className="text-sm text-muted-foreground">
                   Total Area: <span className="font-semibold text-foreground">
-                    {((config.width * config.height) / 144).toFixed(2)} sq ft
+                    {areaInSqFt.toFixed(2)} sq ft
                   </span>
                 </p>
               </div>
@@ -292,7 +276,7 @@ const SinglePageConfigure = () => {
               <CardDescription>Estimated cost breakdown</CardDescription>
             </CardHeader>
             <CardContent>
-              <PriceCalculator config={config} detailed={true} />
+              <PriceCalculator config={configForPricing} detailed={true} />
             </CardContent>
           </Card>
         </div>
