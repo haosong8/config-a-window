@@ -1,7 +1,7 @@
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { ShapeType } from "@/lib/geometry";
-import { Square, Triangle, Home, Hexagon } from "lucide-react";
+import { Square, Triangle, Home, Hexagon, Octagon } from "lucide-react";
 
 interface ShapeSelectorProps {
   value: ShapeType;
@@ -48,6 +48,28 @@ const shapes: { value: ShapeType; label: string; description: string; icon: Reac
       </svg>
     ),
   },
+  {
+    value: "hexagon",
+    label: "Hexagon",
+    description: "6-sided regular",
+    icon: <Hexagon className="w-6 h-6" />,
+  },
+  {
+    value: "octagon",
+    label: "Octagon",
+    description: "8-sided regular",
+    icon: <Octagon className="w-6 h-6" />,
+  },
+  {
+    value: "chamfered-rectangle",
+    label: "Chamfered Rect",
+    description: "Clipped corners",
+    icon: (
+      <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <path d="M6 4 L18 4 L22 8 L22 16 L18 20 L6 20 L2 16 L2 8 Z" />
+      </svg>
+    ),
+  },
 ];
 
 const ShapeSelector = ({ value, onChange, showRectangle = true }: ShapeSelectorProps) => {
@@ -55,7 +77,7 @@ const ShapeSelector = ({ value, onChange, showRectangle = true }: ShapeSelectorP
   
   return (
     <RadioGroup value={value} onValueChange={(v) => onChange(v as ShapeType)}>
-      <div className={`grid gap-3 ${filteredShapes.length <= 4 ? 'grid-cols-2 sm:grid-cols-4' : 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-5'}`}>
+      <div className="grid gap-3 grid-cols-2 sm:grid-cols-4">
         {filteredShapes.map((shape) => (
           <div
             key={shape.value}

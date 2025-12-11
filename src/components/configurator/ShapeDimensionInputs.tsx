@@ -192,6 +192,78 @@ const ShapeDimensionInputs = ({ shape, dimensions, updateDimensions }: ShapeDime
           </div>
         );
 
+      case "hexagon":
+        return (
+          <div className="space-y-2">
+            <Label htmlFor="flatToFlatHeight">Flat-to-Flat Height (inches)</Label>
+            <Input
+              id="flatToFlatHeight"
+              type="number"
+              value={dimensions.flatToFlatHeight === 0 ? '' : dimensions.flatToFlatHeight || ''}
+              onChange={(e) => updateDimensions({ flatToFlatHeight: parseInt(e.target.value) || 0 })}
+              className="text-lg"
+            />
+            <p className="text-xs text-muted-foreground">Distance between top and bottom flat sides</p>
+          </div>
+        );
+
+      case "octagon":
+        return (
+          <div className="space-y-2">
+            <Label htmlFor="octagonFlatToFlat">Flat-to-Flat Size (inches)</Label>
+            <Input
+              id="octagonFlatToFlat"
+              type="number"
+              value={dimensions.octagonFlatToFlat === 0 ? '' : dimensions.octagonFlatToFlat || ''}
+              onChange={(e) => updateDimensions({ octagonFlatToFlat: parseInt(e.target.value) || 0 })}
+              className="text-lg"
+            />
+            <p className="text-xs text-muted-foreground">Distance between opposite flat sides</p>
+          </div>
+        );
+
+      case "chamfered-rectangle":
+        return (
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="chamferWidth">Width (inches)</Label>
+                <Input
+                  id="chamferWidth"
+                  type="number"
+                  value={dimensions.chamferWidth === 0 ? '' : dimensions.chamferWidth || ''}
+                  onChange={(e) => updateDimensions({ chamferWidth: parseInt(e.target.value) || 0 })}
+                  className="text-lg"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="chamferHeight">Height (inches)</Label>
+                <Input
+                  id="chamferHeight"
+                  type="number"
+                  value={dimensions.chamferHeight === 0 ? '' : dimensions.chamferHeight || ''}
+                  onChange={(e) => updateDimensions({ chamferHeight: parseInt(e.target.value) || 0 })}
+                  className="text-lg"
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="chamfer">Corner Chamfer (inches)</Label>
+              <Input
+                id="chamfer"
+                type="number"
+                value={dimensions.chamfer === 0 ? '' : dimensions.chamfer || ''}
+                onChange={(e) => updateDimensions({ chamfer: parseInt(e.target.value) || 0 })}
+                className="text-lg"
+              />
+              <p className="text-xs text-muted-foreground">Equal 45° cut on all 4 corners</p>
+              {(dimensions.chamfer || 0) > Math.min((dimensions.chamferWidth || 0) / 2, (dimensions.chamferHeight || 0) / 2) && (
+                <p className="text-sm text-destructive">⚠️ Chamfer too large for dimensions</p>
+              )}
+            </div>
+          </div>
+        );
+
       default:
         return null;
     }
