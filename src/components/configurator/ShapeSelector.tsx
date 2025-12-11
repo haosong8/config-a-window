@@ -6,6 +6,7 @@ import { Square, Triangle, Home, Hexagon } from "lucide-react";
 interface ShapeSelectorProps {
   value: ShapeType;
   onChange: (shape: ShapeType) => void;
+  showRectangle?: boolean;
 }
 
 const shapes: { value: ShapeType; label: string; description: string; icon: React.ReactNode }[] = [
@@ -49,11 +50,13 @@ const shapes: { value: ShapeType; label: string; description: string; icon: Reac
   },
 ];
 
-const ShapeSelector = ({ value, onChange }: ShapeSelectorProps) => {
+const ShapeSelector = ({ value, onChange, showRectangle = true }: ShapeSelectorProps) => {
+  const filteredShapes = showRectangle ? shapes : shapes.filter(s => s.value !== "rectangle");
+  
   return (
     <RadioGroup value={value} onValueChange={(v) => onChange(v as ShapeType)}>
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-        {shapes.map((shape) => (
+      <div className={`grid gap-3 ${filteredShapes.length <= 4 ? 'grid-cols-2 sm:grid-cols-4' : 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-5'}`}>
+        {filteredShapes.map((shape) => (
           <div
             key={shape.value}
             className={`relative border rounded-lg p-3 cursor-pointer transition-all hover:border-primary ${
