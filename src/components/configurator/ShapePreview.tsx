@@ -133,6 +133,44 @@ const ShapePreview = ({ shape, dimensions, maxSize = 350 }: ShapePreviewProps) =
             </div>
           </>
         );
+
+      case "hexagon":
+        return (
+          <>
+            <div className="absolute -right-28 top-0 bottom-0 flex items-center">
+              <div className="bg-background border border-border px-2 py-1 rounded text-sm font-medium">
+                Flat-to-flat: {dimensions.flatToFlatHeight}"
+              </div>
+            </div>
+          </>
+        );
+
+      case "octagon":
+        return (
+          <>
+            <div className="absolute -right-24 top-0 bottom-0 flex items-center">
+              <div className="bg-background border border-border px-2 py-1 rounded text-sm font-medium">
+                F-to-F: {dimensions.octagonFlatToFlat}"
+              </div>
+            </div>
+          </>
+        );
+
+      case "chamfered-rectangle":
+        return (
+          <>
+            <div className="absolute -bottom-8 left-0 right-0 flex justify-center">
+              <div className="bg-background border border-border px-2 py-1 rounded text-sm font-medium">
+                {dimensions.chamferWidth}" × {dimensions.chamferHeight}"
+              </div>
+            </div>
+            <div className="absolute -top-8 left-0 right-0 flex justify-center">
+              <div className="bg-background border border-border px-2 py-1 rounded text-sm font-medium">
+                Chamfer: {dimensions.chamfer}"
+              </div>
+            </div>
+          </>
+        );
       
       default:
         return null;

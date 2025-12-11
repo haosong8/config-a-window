@@ -1,4 +1,12 @@
-export type ShapeType = "rectangle" | "right-triangle" | "trapezoid" | "house" | "parallelogram";
+export type ShapeType = 
+  | "rectangle" 
+  | "right-triangle" 
+  | "trapezoid" 
+  | "house" 
+  | "parallelogram"
+  | "hexagon"
+  | "octagon"
+  | "chamfered-rectangle";
 
 export interface ShapeDimensions {
   // Rectangle
@@ -19,6 +27,14 @@ export interface ShapeDimensions {
   parallelogramBase?: number;
   parallelogramHeight?: number;
   skewOffset?: number;
+  // Hexagon (regular, flat top)
+  flatToFlatHeight?: number;
+  // Octagon (regular)
+  octagonFlatToFlat?: number;
+  // Chamfered rectangle
+  chamferWidth?: number;
+  chamferHeight?: number;
+  chamfer?: number; // corner chamfer size (all 4 corners)
 }
 
 export interface Point {
@@ -90,6 +106,57 @@ export function getShapeVertices(shape: ShapeType, dims: ShapeDimensions): Point
         { x: base, y: 0 },
         { x: base + skew, y: h },
         { x: skew, y: h },
+      ];
+    }
+
+    case "hexagon": {
+      // Regular hexagon (flat top/bottom)
+      const D = dims.flatToFlatHeight || 0;
+      const s = D / Math.sqrt(3); // side length
+      const halfS = s / 2;
+      const halfD = D / 2;
+      // Centered at origin, then shift to positive quadrant
+      return [
+        { x: s + halfS, y: 0 },        // right bottom
+        { x: s + s, y: halfD },        // right
+        { x: s + halfS, y: D },        // right top
+        { x: halfS, y: D },            // left top
+        { x: 0, y: halfD },            // left
+        { x: halfS, y: 0 },            // left bottom
+      ];
+    }
+
+    case "octagon": {
+      // Regular octagon from flat-to-flat distance
+      const D = dims.octagonFlatToFlat || 0;
+      const s = D / (1 + Math.sqrt(2)); // side length
+      const offset = s / Math.sqrt(2); // diagonal offset
+      return [
+        { x: offset, y: 0 },
+        { x: offset + s, y: 0 },
+        { x: D, y: offset },
+        { x: D, y: offset + s },
+        { x: offset + s, y: D },
+        { x: offset, y: D },
+        { x: 0, y: offset + s },
+        { x: 0, y: offset },
+      ];
+    }
+
+    case "chamfered-rectangle": {
+      // Rectangle with all 4 corners chamfered at 45°
+      const w = dims.chamferWidth || 0;
+      const h = dims.chamferHeight || 0;
+      const c = dims.chamfer || 0;
+      return [
+        { x: c, y: 0 },           // bottom left after chamfer
+        { x: w - c, y: 0 },       // bottom right before chamfer
+        { x: w, y: c },           // right bottom after chamfer
+        { x: w, y: h - c },       // right top before chamfer
+        { x: w - c, y: h },       // top right after chamfer
+        { x: c, y: h },           // top left before chamfer
+        { x: 0, y: h - c },       // left top after chamfer
+        { x: 0, y: c },           // left bottom before chamfer
       ];
     }
 
