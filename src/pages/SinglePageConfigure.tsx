@@ -35,6 +35,8 @@ const SinglePageConfigure = () => {
     width: 48,
     height: 60,
     openingType: "in-swing",
+    horizontalUnits: 1,
+    verticalUnits: 1,
     verticalPanes: 1,
     horizontalPanes: 1,
     glassType: "double-pane",

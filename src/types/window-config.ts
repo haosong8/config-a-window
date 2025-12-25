@@ -8,6 +8,10 @@ export interface WindowConfig {
   openingType: OpeningType;
   thermalBreak: boolean;
   color: string;
+  // Window units in the opening (mulled configuration)
+  horizontalUnits: number;  // Windows side by side
+  verticalUnits: number;    // Windows stacked
+  // Pane divisions within each window
   verticalPanes: number;
   horizontalPanes: number;
   glassType: GlassType;
