@@ -28,6 +28,8 @@ const Configure = () => {
     openingType: "double-hung",
     thermalBreak: false,
     color: "white",
+    horizontalUnits: 1,
+    verticalUnits: 1,
     verticalPanes: 1,
     horizontalPanes: 1,
     glassType: "double-pane",
