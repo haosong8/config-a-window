@@ -1,7 +1,7 @@
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { WindowConfig } from "@/types/window-config";
+import { WindowConfig, generateWindowUnits } from "@/types/window-config";
 
 interface DimensionsStepProps {
   config: WindowConfig;
@@ -29,7 +29,19 @@ const DimensionsStep = ({ config, updateConfig }: DimensionsStepProps) => {
               id="width"
               type="number"
               value={config.width === 0 ? '' : config.width}
-              onChange={(e) => updateConfig({ width: parseInt(e.target.value) || 0 })}
+              onChange={(e) => {
+                const newWidth = parseInt(e.target.value) || 0;
+                const newRows = config.rows.map(row => ({
+                  ...row,
+                  height: config.height / config.rows.length
+                }));
+                const newUnits = generateWindowUnits(newRows, newWidth, config.height, config.openingType);
+                updateConfig({ 
+                  width: newWidth,
+                  rows: newRows,
+                  windowUnits: newUnits
+                });
+              }}
               className="text-lg"
             />
             {(config.width < 12 || config.width > 120) && (
@@ -45,7 +57,19 @@ const DimensionsStep = ({ config, updateConfig }: DimensionsStepProps) => {
               id="height"
               type="number"
               value={config.height === 0 ? '' : config.height}
-              onChange={(e) => updateConfig({ height: parseInt(e.target.value) || 0 })}
+              onChange={(e) => {
+                const newHeight = parseInt(e.target.value) || 0;
+                const newRows = config.rows.map(row => ({
+                  ...row,
+                  height: newHeight / config.rows.length
+                }));
+                const newUnits = generateWindowUnits(newRows, config.width, newHeight, config.openingType);
+                updateConfig({ 
+                  height: newHeight,
+                  rows: newRows,
+                  windowUnits: newUnits
+                });
+              }}
               className="text-lg"
             />
             {(config.height < 12 || config.height > 120) && (
