@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { WindowConfig } from "@/types/window-config";
+import { WindowConfig, createDefaultRows, generateWindowUnits } from "@/types/window-config";
 import PriceCalculator from "@/components/configurator/PriceCalculator";
 import ShapeSelector from "@/components/configurator/ShapeSelector";
 import ShapePreview from "@/components/configurator/ShapePreview";
@@ -31,12 +31,22 @@ const SinglePageConfigure = () => {
     skewOffset: 12,
   });
 
+  // Initialize with proper row/unit configuration
+  const initialWidth = 48;
+  const initialHeight = 60;
+  const initialRows = createDefaultRows(1, initialHeight);
+  const initialUnits = generateWindowUnits(initialRows, initialWidth, initialHeight, "in-swing");
+
   const [config, setConfig] = useState<WindowConfig>({
-    width: 48,
-    height: 60,
+    width: initialWidth,
+    height: initialHeight,
     openingType: "in-swing",
     horizontalUnits: 1,
     verticalUnits: 1,
+    verticalRows: 1,
+    rows: initialRows,
+    windowUnits: initialUnits,
+    selectedWindowId: null,
     verticalPanes: 1,
     horizontalPanes: 1,
     glassType: "double-pane",

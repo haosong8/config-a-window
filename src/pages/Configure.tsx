@@ -9,7 +9,7 @@ import GlassFeaturesStep from "@/components/configurator/GlassFeaturesStep";
 import FinishingStep from "@/components/configurator/FinishingStep";
 import ReviewStep from "@/components/configurator/ReviewStep";
 import PriceCalculator from "@/components/configurator/PriceCalculator";
-import { WindowConfig } from "@/types/window-config";
+import { WindowConfig, createDefaultRows, generateWindowUnits } from "@/types/window-config";
 
 const steps = [
   { id: 1, name: "Dimensions", component: DimensionsStep },
@@ -22,14 +22,25 @@ const steps = [
 const Configure = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
+  
+  // Initialize with proper row/unit configuration
+  const initialWidth = 36;
+  const initialHeight = 48;
+  const initialRows = createDefaultRows(1, initialHeight);
+  const initialUnits = generateWindowUnits(initialRows, initialWidth, initialHeight, "double-hung");
+  
   const [config, setConfig] = useState<WindowConfig>({
-    width: 36,
-    height: 48,
+    width: initialWidth,
+    height: initialHeight,
     openingType: "double-hung",
     thermalBreak: false,
     color: "white",
     horizontalUnits: 1,
     verticalUnits: 1,
+    verticalRows: 1,
+    rows: initialRows,
+    windowUnits: initialUnits,
+    selectedWindowId: null,
     verticalPanes: 1,
     horizontalPanes: 1,
     glassType: "double-pane",
