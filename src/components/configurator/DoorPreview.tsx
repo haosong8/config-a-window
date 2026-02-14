@@ -5,6 +5,7 @@ interface DoorPreviewProps {
   height: number;
   doorStyle: DoorStyle;
   liteType: LiteType;
+  doorPanels?: number;
   frameColor?: string;
   maxSize?: number;
 }
@@ -19,7 +20,7 @@ const frameColorMap: Record<string, string> = {
   "forest-green": "#228B22",
 };
 
-const DoorPreview = ({ width, height, doorStyle, liteType, frameColor = "white", maxSize = 350 }: DoorPreviewProps) => {
+const DoorPreview = ({ width, height, doorStyle, liteType, doorPanels = 2, frameColor = "white", maxSize = 350 }: DoorPreviewProps) => {
   if (width <= 0 || height <= 0) {
     return (
       <div className="flex items-center justify-center h-[400px] text-muted-foreground">
@@ -62,27 +63,21 @@ const DoorPreview = ({ width, height, doorStyle, liteType, frameColor = "white",
           stroke={fc} strokeWidth={2} />
       );
     } else {
-      // solid
       glassElements.push(
         <rect key="panel" x={innerX + 4} y={innerY + 4} width={innerW - 8} height={innerH - 8}
           fill={panelFill} stroke={fc} strokeWidth={1} rx={2} />
       );
     }
 
-    // Handle position
     const handleX = hingeLeft ? innerX + innerW - 12 : innerX + 8;
     const handleY = innerY + innerH * 0.5;
 
     return (
-      <g key={`door-${x}`}>
-        {/* Frame */}
+      <g key={`door-${x}-${y}`}>
         <rect x={x} y={y} width={dw} height={dh} fill={fc} stroke="hsl(var(--foreground))" strokeWidth={2} rx={3} />
-        {/* Inner recess */}
         <rect x={innerX} y={innerY} width={innerW} height={innerH} fill={fc} stroke="none" rx={1} />
         {glassElements}
-        {/* Handle */}
         <circle cx={handleX} cy={handleY} r={handleR} fill="hsl(var(--foreground) / 0.6)" stroke="hsl(var(--foreground))" strokeWidth={1.5} />
-        {/* Hinges */}
         {[0.2, 0.8].map((pct, i) => {
           const hx = hingeLeft ? x + 2 : x + dw - 5;
           return (
@@ -94,61 +89,93 @@ const DoorPreview = ({ width, height, doorStyle, liteType, frameColor = "white",
     );
   };
 
-  const renderSlidingDoor = () => {
-    const panelW = sw / 2;
-    return (
-      <g>
-        {/* Track frame */}
-        <rect x={0} y={0} width={sw} height={sh} fill={fc} stroke="hsl(var(--foreground))" strokeWidth={2} rx={3} />
-        {/* Fixed panel (left) */}
-        <rect x={frameW} y={frameW} width={panelW - frameW} height={sh - frameW * 2}
-          fill={glassFill} stroke={glassStroke} strokeWidth={1.5} rx={2} />
-        {/* Sliding panel (right, slightly overlapping) */}
-        <rect x={panelW - 2} y={frameW - 1} width={panelW - frameW + 2} height={sh - frameW * 2 + 2}
-          fill={glassFill} stroke="hsl(var(--foreground) / 0.5)" strokeWidth={2} rx={2} />
-        {/* Sliding handle */}
-        <rect x={panelW + 2} y={sh * 0.45} width={3} height={sh * 0.1}
-          fill="hsl(var(--foreground) / 0.6)" rx={1.5} />
-        {/* Arrow indicator */}
-        <text x={panelW + panelW / 2} y={sh - frameW - 6} textAnchor="middle"
-          fontSize={10} fill="hsl(var(--foreground) / 0.4)">→ slides</text>
-        {/* Track lines */}
-        <line x1={frameW} y1={sh - 3} x2={sw - frameW} y2={sh - 3} stroke="hsl(var(--foreground) / 0.3)" strokeWidth={1} />
-      </g>
-    );
-  };
-
-  const renderBifoldDoor = () => {
-    const panels = 4;
-    const panelW = (sw - frameW * 2) / panels;
+  const renderMultiPanelGlass = (panels: number, isSliding: boolean) => {
+    const innerW = sw - frameW * 2;
+    const innerH = sh - frameW * 2;
+    const panelW = innerW / panels;
+    
+    // For sliding doors, one panel overlaps slightly to show it slides
+    // For bifold, panels have fold hinges between them
     return (
       <g>
         {/* Outer frame */}
         <rect x={0} y={0} width={sw} height={sh} fill={fc} stroke="hsl(var(--foreground))" strokeWidth={2} rx={3} />
+        
         {/* Panels */}
         {Array.from({ length: panels }).map((_, i) => {
           const px = frameW + i * panelW;
-          const isAlternate = i % 2 === 1;
+          const isOperablePanel = isSliding 
+            ? i === panels - 1  // last panel slides for sliding
+            : true;             // all panels fold for bifold
+          
           return (
             <g key={i}>
-              <rect x={px + 2} y={frameW + 2} width={panelW - 4} height={sh - frameW * 2 - 4}
-                fill={glassFill} stroke={glassStroke} strokeWidth={1.5} rx={2}
-                transform={isAlternate ? `skewY(2)` : ""} />
-              {/* Fold line between panels */}
+              {/* Glass panel */}
+              <rect 
+                x={px + 3} 
+                y={frameW + 3} 
+                width={panelW - 6} 
+                height={innerH - 6}
+                fill={glassFill} 
+                stroke={isOperablePanel && isSliding ? "hsl(var(--foreground) / 0.5)" : glassStroke} 
+                strokeWidth={isOperablePanel && isSliding ? 2 : 1.5} 
+                rx={2} 
+              />
+              
+              {/* Divider line between panels */}
               {i > 0 && (
-                <line x1={px} y1={frameW} x2={px} y2={sh - frameW}
-                  stroke="hsl(var(--foreground) / 0.5)" strokeWidth={2} strokeDasharray="4,3" />
+                <line 
+                  x1={px} y1={frameW} x2={px} y2={sh - frameW}
+                  stroke="hsl(var(--foreground) / 0.5)" 
+                  strokeWidth={2} 
+                  strokeDasharray={isSliding ? "none" : "4,3"} 
+                />
               )}
-              {/* Hinge dots at fold points */}
-              {i > 0 && [0.25, 0.5, 0.75].map((pct, hi) => (
-                <circle key={hi} cx={px} cy={frameW + (sh - frameW * 2) * pct} r={2}
+              
+              {/* Bifold: hinge dots at fold points */}
+              {!isSliding && i > 0 && [0.25, 0.5, 0.75].map((pct, hi) => (
+                <circle key={hi} cx={px} cy={frameW + innerH * pct} r={2}
                   fill="hsl(var(--foreground) / 0.4)" />
               ))}
             </g>
           );
         })}
-        {/* Track */}
-        <line x1={frameW} y1={3} x2={sw - frameW} y2={3} stroke="hsl(var(--foreground) / 0.3)" strokeWidth={1} />
+        
+        {/* Handle */}
+        {isSliding ? (
+          // Sliding handle: vertical bar on the operable panel
+          <rect 
+            x={frameW + (panels - 1) * panelW + 4} 
+            y={sh * 0.45} 
+            width={3} height={sh * 0.1}
+            fill="hsl(var(--foreground) / 0.6)" rx={1.5} 
+          />
+        ) : (
+          // Bifold handle: on the leading panel edge
+          <circle 
+            cx={frameW + panelW - 8} 
+            cy={sh * 0.5} 
+            r={handleR} 
+            fill="hsl(var(--foreground) / 0.6)" 
+            stroke="hsl(var(--foreground))" strokeWidth={1.5} 
+          />
+        )}
+        
+        {/* Track line */}
+        <line x1={frameW} y1={isSliding ? sh - 3 : 3} x2={sw - frameW} y2={isSliding ? sh - 3 : 3} 
+          stroke="hsl(var(--foreground) / 0.3)" strokeWidth={1} />
+        
+        {/* Bifold also has bottom track */}
+        {!isSliding && (
+          <line x1={frameW} y1={sh - 3} x2={sw - frameW} y2={sh - 3} 
+            stroke="hsl(var(--foreground) / 0.3)" strokeWidth={1} />
+        )}
+        
+        {/* Label */}
+        <text x={sw / 2} y={sh - frameW - 6} textAnchor="middle"
+          fontSize={10} fill="hsl(var(--foreground) / 0.4)">
+          {panels} panel{panels > 1 ? "s" : ""} • {isSliding ? "slides →" : "folds ↔"}
+        </text>
       </g>
     );
   };
@@ -162,14 +189,13 @@ const DoorPreview = ({ width, height, doorStyle, liteType, frameColor = "white",
           <g>
             {renderSingleDoor(0, 0, sw / 2, sh, true)}
             {renderSingleDoor(sw / 2, 0, sw / 2, sh, false)}
-            {/* Center meeting rail */}
             <line x1={sw / 2} y1={0} x2={sw / 2} y2={sh} stroke="hsl(var(--foreground))" strokeWidth={2} />
           </g>
         );
       case "sliding":
-        return renderSlidingDoor();
+        return renderMultiPanelGlass(doorPanels, true);
       case "bifold":
-        return renderBifoldDoor();
+        return renderMultiPanelGlass(doorPanels, false);
     }
   };
 
@@ -179,13 +205,11 @@ const DoorPreview = ({ width, height, doorStyle, liteType, frameColor = "white",
         <svg width={sw} height={sh} className="overflow-visible">
           {renderDoor()}
         </svg>
-        {/* Width label */}
         <div className="absolute -top-8 left-0 right-0 flex justify-center">
           <div className="bg-background border border-border px-2 py-1 rounded text-sm font-medium">
             {width}" ({(width / 12).toFixed(1)}')
           </div>
         </div>
-        {/* Height label */}
         <div className="absolute -right-24 top-0 bottom-0 flex items-center">
           <div className="bg-background border border-border px-2 py-1 rounded text-sm font-medium">
             {height}" ({(height / 12).toFixed(1)}')

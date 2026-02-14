@@ -53,6 +53,7 @@ const Configure = () => {
     hardwareType: "standard",
     doorStyle: "single",
     liteType: "full-lite",
+    doorPanels: 2,
   });
 
   const progress = (currentStep / steps.length) * 100;
@@ -122,8 +123,10 @@ const Configure = () => {
                 <DoorOptionsPanel
                   doorStyle={config.doorStyle}
                   liteType={config.liteType}
+                  doorPanels={config.doorPanels}
                   onDoorStyleChange={(style) => updateConfig({ doorStyle: style })}
                   onLiteTypeChange={(lite) => updateConfig({ liteType: lite })}
+                  onDoorPanelsChange={(panels) => updateConfig({ doorPanels: panels })}
                 />
               </div>
             )}
@@ -149,6 +152,7 @@ const Configure = () => {
                   height={config.height}
                   doorStyle={config.doorStyle}
                   liteType={config.liteType}
+                  doorPanels={config.doorPanels}
                   frameColor={config.color}
                 />
               </div>

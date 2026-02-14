@@ -1,12 +1,15 @@
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DoorStyle, LiteType } from "@/types/window-config";
 
 interface DoorOptionsPanelProps {
   doorStyle: DoorStyle;
   liteType: LiteType;
+  doorPanels: number;
   onDoorStyleChange: (style: DoorStyle) => void;
   onLiteTypeChange: (lite: LiteType) => void;
+  onDoorPanelsChange: (panels: number) => void;
 }
 
 const doorStyles: { value: DoorStyle; label: string; description: string }[] = [
@@ -22,8 +25,13 @@ const liteTypes: { value: LiteType; label: string; description: string }[] = [
   { value: "solid", label: "Solid Panel", description: "No glass, fully solid door" },
 ];
 
-const DoorOptionsPanel = ({ doorStyle, liteType, onDoorStyleChange, onLiteTypeChange }: DoorOptionsPanelProps) => {
+const DoorOptionsPanel = ({ doorStyle, liteType, doorPanels, onDoorStyleChange, onLiteTypeChange, onDoorPanelsChange }: DoorOptionsPanelProps) => {
   const showLiteOptions = doorStyle === "single" || doorStyle === "double";
+  const showPanelCount = doorStyle === "sliding" || doorStyle === "bifold";
+  
+  const panelOptions = doorStyle === "sliding" 
+    ? [2, 3, 4] 
+    : [2, 3, 4, 5, 6, 7, 8]; // bifold supports more panels
 
   return (
     <div className="space-y-6">
@@ -46,6 +54,30 @@ const DoorOptionsPanel = ({ doorStyle, liteType, onDoorStyleChange, onLiteTypeCh
           </div>
         </RadioGroup>
       </div>
+
+      {/* Panel Count - for sliding and bifold */}
+      {showPanelCount && (
+        <div className="space-y-3">
+          <Label className="text-base font-semibold">Number of Panels</Label>
+          <Select value={doorPanels.toString()} onValueChange={(v) => onDoorPanelsChange(parseInt(v))}>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {panelOptions.map((n) => (
+                <SelectItem key={n} value={n.toString()}>
+                  {n} Panel{n > 1 ? "s" : ""}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <p className="text-xs text-muted-foreground">
+            {doorStyle === "sliding" 
+              ? "Standard sliding doors use 2-4 panels" 
+              : "Bifold doors typically use 2-8 folding panels"}
+          </p>
+        </div>
+      )}
 
       {/* Lite Type - only for single and double doors */}
       {showLiteOptions && (

@@ -51,6 +51,7 @@ export interface WindowConfig {
   // Door-specific fields
   doorStyle: DoorStyle;
   liteType: LiteType;
+  doorPanels: number; // Number of panels for sliding/bifold doors (2-8)
 }
 
 // Helper to generate window units from row configuration

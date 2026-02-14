@@ -59,6 +59,7 @@ const SinglePageConfigure = () => {
     hardwareType: "standard",
     doorStyle: "single",
     liteType: "full-lite",
+    doorPanels: 2,
   });
 
   const updateDimensions = (updates: Partial<ShapeDimensions>) => {
@@ -131,6 +132,7 @@ const SinglePageConfigure = () => {
                     height={dimensions.height || 80}
                     doorStyle={config.doorStyle}
                     liteType={config.liteType}
+                    doorPanels={config.doorPanels}
                     frameColor={config.color}
                   />
                 ) : (
@@ -152,8 +154,10 @@ const SinglePageConfigure = () => {
                 <DoorOptionsPanel
                   doorStyle={config.doorStyle}
                   liteType={config.liteType}
+                  doorPanels={config.doorPanels}
                   onDoorStyleChange={(style) => updateConfig({ doorStyle: style })}
                   onLiteTypeChange={(lite) => updateConfig({ liteType: lite })}
+                  onDoorPanelsChange={(panels) => updateConfig({ doorPanels: panels })}
                 />
               )}
               {/* Opening Type - windows only */}
