@@ -53,14 +53,19 @@ const DoorPreview = ({ width, height, doorStyle, liteType, doorPanels = 2, frame
           fill={glassFill} stroke={glassStroke} strokeWidth={1.5} rx={2} />
       );
     } else if (liteType === "half-lite") {
-      const glassH = (innerH - 8) * 0.5;
+      // Half-lite: glass takes top ~2/3, solid panel covers bottom ~1/3
+      const solidH = (innerH - 8) * 0.33;
+      const glassH = innerH - 8 - solidH - 4;
       glassElements.push(
         <rect key="glass" x={innerX + 4} y={innerY + 4} width={innerW - 8} height={glassH}
           fill={glassFill} stroke={glassStroke} strokeWidth={1.5} rx={2} />,
-        <rect key="panel" x={innerX + 4} y={innerY + 4 + glassH + 4} width={innerW - 8} height={innerH - 8 - glassH - 4}
-          fill={panelFill} stroke={fc} strokeWidth={1} rx={2} />,
         <line key="rail" x1={innerX + 4} y1={innerY + 4 + glassH + 2} x2={innerX + innerW - 4} y2={innerY + 4 + glassH + 2}
-          stroke={fc} strokeWidth={2} />
+          stroke={fc} strokeWidth={3} />,
+        <rect key="panel" x={innerX + 4} y={innerY + 4 + glassH + 4} width={innerW - 8} height={solidH}
+          fill={panelFill} stroke={fc} strokeWidth={1.5} rx={2} />,
+        // Raised panel detail inside the solid section
+        <rect key="panel-inset" x={innerX + 12} y={innerY + 4 + glassH + 12} width={innerW - 24} height={solidH - 16}
+          fill="none" stroke={fc} strokeWidth={1} rx={3} opacity={0.5} />
       );
     } else {
       glassElements.push(
