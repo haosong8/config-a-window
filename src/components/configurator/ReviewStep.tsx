@@ -37,7 +37,9 @@ const ReviewStep = ({ config }: ReviewStepProps) => {
             </div>
             <div>
               <CardTitle>Configuration Summary</CardTitle>
-              <CardDescription>Review your custom window specifications</CardDescription>
+              <CardDescription>
+                Review your custom {config.productType === "door" ? "door" : "window"} specifications
+              </CardDescription>
             </div>
           </div>
         </CardHeader>
@@ -58,21 +60,37 @@ const ReviewStep = ({ config }: ReviewStepProps) => {
 
           <Separator />
 
-          <div>
-            <h3 className="font-semibold mb-3">Style & Configuration</h3>
-            <div className="space-y-2">
-              <div className="flex justify-between items-center">
-                <span className="text-muted-foreground">Opening Type</span>
-                <Badge variant="secondary">{formatOpeningType(config.openingType)}</Badge>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-muted-foreground">Grid Pattern</span>
-                <Badge variant="secondary">
-                  {config.horizontalPanes} × {config.verticalPanes}
-                </Badge>
+          {config.productType === "door" ? (
+            <div>
+              <h3 className="font-semibold mb-3">Door Configuration</h3>
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <span className="text-muted-foreground">Door Style</span>
+                  <Badge variant="secondary">{formatOpeningType(config.doorStyle)}</Badge>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-muted-foreground">Glass Configuration</span>
+                  <Badge variant="secondary">{formatOpeningType(config.liteType)}</Badge>
+                </div>
               </div>
             </div>
-          </div>
+          ) : (
+            <div>
+              <h3 className="font-semibold mb-3">Style & Configuration</h3>
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <span className="text-muted-foreground">Opening Type</span>
+                  <Badge variant="secondary">{formatOpeningType(config.openingType)}</Badge>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-muted-foreground">Grid Pattern</span>
+                  <Badge variant="secondary">
+                    {config.horizontalPanes} × {config.verticalPanes}
+                  </Badge>
+                </div>
+              </div>
+            </div>
+          )}
 
           <Separator />
 
@@ -126,9 +144,8 @@ const ReviewStep = ({ config }: ReviewStepProps) => {
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground">
-            Your custom window configuration is complete. Contact our sales team to finalize your order and
-            receive a detailed quote. Our experts will work with you to ensure every detail meets your
-            specifications.
+            Your custom {config.productType === "door" ? "door" : "window"} configuration is complete. 
+            Contact our sales team to finalize your order and receive a detailed quote.
           </p>
         </CardContent>
       </Card>

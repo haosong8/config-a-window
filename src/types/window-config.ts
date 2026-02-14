@@ -1,4 +1,7 @@
+export type ProductType = "window" | "door";
 export type OpeningType = "fixed" | "casement-left" | "casement-right" | "awning" | "hopper" | "in-swing" | "out-swing" | "double-hung" | "single-hung";
+export type DoorStyle = "single" | "double" | "sliding" | "bifold";
+export type LiteType = "full-lite" | "half-lite" | "solid";
 export type GlassType = "double-pane" | "triple-pane";
 export type HardwareType = "standard" | "premium" | "luxury";
 
@@ -20,6 +23,9 @@ export interface WindowRow {
 }
 
 export interface WindowConfig {
+  // Product type
+  productType: ProductType;
+  
   // Overall opening dimensions
   width: number;
   height: number;
@@ -41,6 +47,10 @@ export interface WindowConfig {
   glassType: GlassType;
   screens: boolean;
   hardwareType: HardwareType;
+  
+  // Door-specific fields
+  doorStyle: DoorStyle;
+  liteType: LiteType;
 }
 
 // Helper to generate window units from row configuration
