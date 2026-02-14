@@ -10,6 +10,9 @@ import PriceCalculator from "@/components/configurator/PriceCalculator";
 import ShapeSelector from "@/components/configurator/ShapeSelector";
 import ShapePreview from "@/components/configurator/ShapePreview";
 import ShapeDimensionInputs from "@/components/configurator/ShapeDimensionInputs";
+import ProductTypeSelector from "@/components/configurator/ProductTypeSelector";
+import DoorOptionsPanel from "@/components/configurator/DoorOptionsPanel";
+import DoorPreview from "@/components/configurator/DoorPreview";
 import { ShapeType, ShapeDimensions, calculateShapeArea } from "@/lib/geometry";
 
 const SinglePageConfigure = () => {
@@ -31,13 +34,13 @@ const SinglePageConfigure = () => {
     skewOffset: 12,
   });
 
-  // Initialize with proper row/unit configuration
   const initialWidth = 48;
   const initialHeight = 60;
   const initialRows = createDefaultRows(1, initialHeight);
   const initialUnits = generateWindowUnits(initialRows, initialWidth, initialHeight, "in-swing");
 
   const [config, setConfig] = useState<WindowConfig>({
+    productType: "window",
     width: initialWidth,
     height: initialHeight,
     openingType: "in-swing",
@@ -53,7 +56,9 @@ const SinglePageConfigure = () => {
     thermalBreak: false,
     screens: false,
     color: "white",
-    hardwareType: "standard"
+    hardwareType: "standard",
+    doorStyle: "single",
+    liteType: "full-lite",
   });
 
   const updateDimensions = (updates: Partial<ShapeDimensions>) => {
@@ -91,30 +96,68 @@ const SinglePageConfigure = () => {
   return (
     <div className="min-h-screen bg-background py-8">
       <div className="container mx-auto px-4">
-        <h1 className="text-4xl font-bold mb-8 text-center">Window Configurator</h1>
+        <h1 className="text-4xl font-bold mb-8 text-center">
+          {config.productType === "door" ? "Door" : "Window"} Configurator
+        </h1>
+
+        {/* Product Type Selector */}
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle>Product Type</CardTitle>
+            <CardDescription>Choose what you're configuring</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ProductTypeSelector
+              value={config.productType}
+              onChange={(type) => updateConfig({ productType: type })}
+            />
+          </CardContent>
+        </Card>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Top Left: Product Name & Window Preview */}
+          {/* Top Left: Preview */}
           <Card className="lg:row-span-1">
             <CardHeader>
-              <CardTitle className="text-2xl">Custom Window</CardTitle>
+              <CardTitle className="text-2xl">
+                Custom {config.productType === "door" ? "Door" : "Window"}
+              </CardTitle>
               <CardDescription>Live preview of your configuration (to scale)</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="bg-muted rounded-lg p-8">
-                <ShapePreview shape={shape} dimensions={dimensions} />
+                {config.productType === "door" ? (
+                  <DoorPreview
+                    width={dimensions.width || 48}
+                    height={dimensions.height || 80}
+                    doorStyle={config.doorStyle}
+                    liteType={config.liteType}
+                    frameColor={config.color}
+                  />
+                ) : (
+                  <ShapePreview shape={shape} dimensions={dimensions} />
+                )}
               </div>
             </CardContent>
           </Card>
 
-          {/* Top Right: Options Attribute Selection */}
+          {/* Top Right: Options */}
           <Card className="lg:row-span-1">
             <CardHeader>
               <CardTitle>Options & Attributes</CardTitle>
-              <CardDescription>Customize your window features</CardDescription>
+              <CardDescription>Customize your {config.productType} features</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              {/* Opening Type */}
+              {/* Door-specific options */}
+              {config.productType === "door" && (
+                <DoorOptionsPanel
+                  doorStyle={config.doorStyle}
+                  liteType={config.liteType}
+                  onDoorStyleChange={(style) => updateConfig({ doorStyle: style })}
+                  onLiteTypeChange={(lite) => updateConfig({ liteType: lite })}
+                />
+              )}
+              {/* Opening Type - windows only */}
+              {config.productType === "window" && (
               <div className="space-y-3">
                 <Label className="text-base font-semibold">Opening Type</Label>
                 <RadioGroup value={config.openingType} onValueChange={(value) => updateConfig({ openingType: value as any })}>
@@ -133,6 +176,7 @@ const SinglePageConfigure = () => {
                   </div>
                 </RadioGroup>
               </div>
+              )}
 
               {/* Glass Type */}
               <div className="space-y-3">
@@ -263,8 +307,8 @@ const SinglePageConfigure = () => {
                 />
               </div>
 
-              {/* Grid Configuration (only for rectangle) */}
-              {shape === "rectangle" && (
+              {/* Grid Configuration (only for rectangle windows) */}
+              {config.productType === "window" && shape === "rectangle" && (
                 <div className="space-y-3">
                   <Label className="text-base font-semibold">Grid Pattern</Label>
                   <div className="grid grid-cols-2 gap-4">
